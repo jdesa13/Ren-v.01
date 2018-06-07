@@ -15,5 +15,5 @@ render::~render() {}
 
 void render::setsize(int a, int b) {
 
-	mWidth = a; mHeigth = b;
+	mWidth = a; mHeight = b;
 }
