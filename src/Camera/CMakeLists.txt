@@ -1,6 +1,6 @@
 include_directories(
    ${BASS_INCLUDE_DIR}
-   ${EIGEN_INCLUDE_DIR}
+   ${EIGEN3_INCLUDE_DIR}
    ${REN_INCLUDE_DIR})
 
 LINK_DIRECTORIES(${PROJECT_BINARY_DIR}/lib)
@@ -11,4 +11,4 @@ set(CAM_SRCS
 	
 SET(LIB_TYPE STATIC)
 
-add_library(camera ${LIB_TYPE} ${CAM_SRCS})	
+add_library(Camera ${LIB_TYPE} ${CAM_SRCS})	

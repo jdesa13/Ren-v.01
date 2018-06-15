@@ -9,6 +9,6 @@ set(REND_SRCS
 	
 SET(LIB_TYPE STATIC)
 
-add_library(render ${LIB_TYPE} ${REND_SRCS})
+add_library(Renderer ${LIB_TYPE} ${REND_SRCS})
 	
 

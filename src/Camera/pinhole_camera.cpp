@@ -7,9 +7,9 @@ pinhole::pinhole(){
 	mDr = dr; mLoc = P;
 }
 
-pinhole::pinhole(Eigen::Vector3d P, Eigen::Vector3d dir)
+pinhole::pinhole( Eigen::Vector3d dir, Eigen::Vector3d loc)
 {
-	mLoc = P; mDr = dir;
+	mLoc = loc; mDr = dir;
 }
 
 pinhole::~pinhole() {}
@@ -19,12 +19,12 @@ Eigen::Vector3d pinhole::getDir()
 	return mDr;
 }
 
-void pinhole::setDir(int width, int height,int Xsize, int Ysize, int theta, Eigen::Vector3d p)
+void pinhole::setDir(int width, int height, int theta, Eigen::Vector3d p)
 {
-	float AR = Xsize / Ysize;
 	
-	float Pcx = AR * (2 * ((width + .5) / Xsize) - 1)*tan((theta / 2)* M_PI / 180);
-	float Pcy = (1 - 2 * ((height + .5) / Ysize))*tan((theta / 2)* M_PI / 180);
+	float Pcx = AR * (2 * ((width + .5) / mWidth) - 1) *tan((theta / 2)* M_PI / 180);
+	float Pcy = (1 - 2 * ((height + .5) / mHeight)) *tan((theta / 2)* M_PI / 180);
+
 
 	Eigen::Vector3d Pc(Pcx, Pcy, -1);
 	

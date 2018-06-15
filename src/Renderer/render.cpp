@@ -1,9 +1,8 @@
 #include"Bass/render.h"
 
-render::render() {
-
+render::render()
+{
 	mWidth = 800; mHeight = 600;
-
 }
 
 render::render(int width, int height) {

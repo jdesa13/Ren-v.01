@@ -9,12 +9,11 @@ class render {
 protected:
 	unsigned int mWidth, mHeight;
 
-	render() {};
-	render(int width, int height)
-	: mWidth(width), mHeight(height) {};
-	~render() {};
-
 public:
+
+	render();
+	render(int width, int height);
+	~render();
 
 	void setsize(int a, int b);
 };
