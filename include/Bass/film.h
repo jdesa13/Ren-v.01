@@ -7,9 +7,13 @@
 #define _J_FILM
 
 class film : public camera {
+protected:
+
+	unsigned int mWidth, mHeight;
+
 public:
 
-	film() { mWidth = 800; mHeight = 600; };
+	film() {};
 	film(int width, int height) { mWidth = width; mHeight = height; };
 	~film() {};
 

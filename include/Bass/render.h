@@ -6,16 +6,10 @@
 #define _J_REN
 
 class render {
-protected:
-	unsigned int mWidth, mHeight;
-
 public:
 
-	render();
-	render(int width, int height);
-	~render();
-
-	void setsize(int a, int b);
+	render() {};
+	~render() {};
 };
 
 #endif

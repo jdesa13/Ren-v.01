@@ -14,6 +14,7 @@ set (GENERIC_INCLUDE_PATHS
     ${GLOG_CUSTOM_INCLUDE_DIR}
     ${GLOG_CUSTOM_INCLUDE_DIR}/glog
     ${GLOG_CUSTOM_INCLUDE_DIR}/glog/src
+    ${GLOG_CUSTOM_LIB_DIR}/
     /usr/local/include/glog
     /usr/local/include/glog/include
     /usr/include
@@ -22,12 +23,21 @@ set (GENERIC_INCLUDE_PATHS
     /sw/include
     /opt/local/include )
 
+if(WIN32)
+   SET(GENERIC_INCLUDE_PATHS ${GENERIC_INCLUDE_PATHS} ${GLOG_CUSTOM_INCLUDE_DIR}/glog/src/windows/glog)
+endif()
+
 find_path (GLOG_INCLUDE_DIR    logging.h
            PATHS ${GENERIC_INCLUDE_PATHS}  NO_DEFAULT_PATH)
 
+if(WIN32)
+    get_filename_component(GLOGBASE_PATH ${GLOG_INCLUDE_DIR} PATH)
+    set(GLOG_INCLUDE_DIR ${GLOG_INCLUDE_DIR} ${GLOGBASE_PATH})
+endif()
 
 set (GENERIC_LIBRARY_PATHS
     ${GENERIC_LIBRARY_PATHS}
+    ${GLOG_CUSTOM_LIB_DIR}
     ${GLOG_CUSTOM_LIB_DIR}/Debug
     ${GLOG_CUSTOM_LIB_DIR}/Release
     ${GLOG_CUSTOM_LIB_DIR}/lib
@@ -58,5 +68,11 @@ if (GLOG_INCLUDE_DIR AND GLOG_LIBRARY_RELEASE)
     set (GLOG_FOUND TRUE)
     select_library_configurations(GLOG)
 else()
+    if(NOT WIN32)
+      MESSAGE("Did you make install !!!-----")
+    endif()
+    MESSAGE(STATUS "Include: " ${GLOG_INCLUDE_DIR})
+    MESSAGE(STATUS "libs: " ${GLOG_LIBRARY_RELEASE})
     MESSAGE(FATAL_ERROR  "GLOG NOT FOUND!!" ${GLOG_LIBRARY_RELEASE})
+
 endif ()

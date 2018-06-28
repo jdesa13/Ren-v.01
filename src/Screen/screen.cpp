@@ -1,25 +1,58 @@
-#include"Bass/screen.h"
+#include "Bass/screen.h"
 
-screen::screen()
-{}
-
-screen::screen(int width, int height)
+pinhole screen::camToWorld(Eigen::Vector3d dir, Eigen::Vector3d loc, int theta)
 {
-	mWidth = width; mHeight = height;
-}
-screen::~screen() {}
+	enum cam {PIN};
+	cam x;
 
-void screen::setsize(int a, int b)
+	if (mFormat == "pinhole") {
+		x = PIN;
+	}
+
+	switch (x) {
+
+	case PIN:
+	{pinhole one(dir, loc, theta);
+	return one;
+	break;
+	}
+	default:
+	{std::cout << "ERROR in cam2W in screen" << std::endl;
+	break; }
+
+	}
+
+
+}
+
+void screen::shapesToWorld(std::string here, Eigen::Vector3d cen, Eigen::Vector3d col, float r)
 {
-	mWidth = a; mHeight = b;
+	shape* one;
+	enum cam { SPH, TRI};
+	cam x;
+
+	if (here == "sphere") {
+		x = SPH;
+	}
+
+	switch (x) {
+
+	case SPH:
+	{one = new sphere(cen, col, r);
+	break;
+	}
+	default:
+	{std::cout << "ERROR in cam2W in screen" << std::endl;
+	break; }
+
+	}
+
+	mShapes.push_back(one);
+	std::cout << mShapes.size() << std::endl;
+	std::cout <<":3" <<std::endl;
 }
-int screen::Getwidth() {
 
-	return mWidth;
-
-}
-int screen::Getheight() {
-
-	return mHeight;
-
+std::vector<shape*> screen::getShapes()
+{
+	return mShapes;
 }

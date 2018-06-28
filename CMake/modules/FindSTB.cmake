@@ -1,14 +1,7 @@
-# By Jonathan Dearborn
-# Based on FindFFMPEG.cmake
-# Copyright (c) 2008 Andreas Schneider <mail@cynapses.org>
-#
-#  Redistribution and use is allowed according to the terms of the New
-#  BSD license.
-#
 # Defines:
-# STBI_FOUND
-# STBI_INCLUDE_DIR
-# STBI_LIBRARY
+# STB_FOUND
+# STB_INCLUDE_DIR
+# STB_LIBRARY #optional - turned off for now.
 #
 
 if (STB_LIBRARY AND STB_INCLUDE_DIR)

@@ -57,3 +57,4 @@ Eigen::Vector3d material::ambient()
 	
 	return Ac;
 }
+

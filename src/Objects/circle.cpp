@@ -52,7 +52,47 @@ Eigen::Vector3d sphere::normal(Eigen::Vector3d sect)
 	return sect - mCenter;
 }
 
-void sphere::Getcen()
+void sphere::getCenter()
 {
 	std::cout << mCenter << std::endl;
+}
+
+float sphere::intersect(Eigen::Vector3d origin, Eigen::Vector3d dr)
+{
+	Eigen::Vector3d sc = (origin - mCenter);
+	float a = dr.dot(dr);
+	float b = 2.0f * (sc).dot(dr);
+	float c = sc.dot(sc) - mRadius * mRadius;
+	float D = pow(b, 2.0f) - (4.0f * a * c);
+
+	int find = hit(D);
+
+	float t = -999.0f;
+	if (find != 0) {
+		if (D = 0.0f) {
+			t = -b / 2.0f;
+		}
+		else if (D > 0.0) {
+			float t0 = (-b - pow(D, (0.5f))) / (a * 2.0);
+			float t1 = (-b + pow(D, (0.5f))) / (a * 2.0);
+			if (t0 > 0.0) {
+				t = t0;
+			}
+			else
+				t = t1;
+		}
+	}
+	return t;
+}
+
+int sphere::hit(float d)
+{
+	int hit = 1;
+
+	if (d < 0)
+	{
+		hit = 0;
+	}
+
+	return hit;
 }

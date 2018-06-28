@@ -1,0 +1,45 @@
+{
+ "scene":
+ {
+	"version": "0.1.1",
+
+ 	"integrator":
+	{
+		"type": "constant"
+	},
+
+	"sensor":
+	{
+		"type": "pinhole",
+		"transform":
+		{
+			"type": "toWorld",
+			"position": [0,0,0],
+			"viewat": [0,0,-1],
+			"fov": 90
+		},
+		"film":
+		{
+			"type": "ldrfilm",
+			"width": 800,
+			"height": 600,
+			"fileFormat": "png",
+			"outputname": "output"
+		}
+	},
+
+	"shapes": [
+	{
+		"type": "sphere",
+		"radius": 4,
+		"position": [2.0, 1.0, 1.0]
+	},
+	{
+		"type": "sphere",
+		"radius": 4,
+		"position": [0.0, 1.0, 0.0]
+	}
+]
+
+ }
+}

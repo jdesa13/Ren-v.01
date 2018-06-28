@@ -2,7 +2,7 @@
 
 shape::shape()
 {
-	Eigen::Vector3d filler(1,1,1);
+	Eigen::Vector3d filler(1,0,0);
 
 	mColor = filler;
 }

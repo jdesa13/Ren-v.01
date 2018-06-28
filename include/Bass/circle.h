@@ -18,7 +18,9 @@ public:
 
 	Eigen::Vector3d Sectfind(Eigen::Vector3d p, Eigen::Vector3d dr);
 	Eigen::Vector3d normal(Eigen::Vector3d sect);
-    void Getcen();
+    void getCenter();
+	float intersect(Eigen::Vector3d origin, Eigen::Vector3d dr);
+	int hit(float d);
 };
 
 #endif //_J_CIR
