@@ -56,3 +56,23 @@ std::vector<shape*> screen::getShapes()
 {
 	return mShapes;
 }
+
+void screen::setFileW(int w)
+{
+	width = w;
+}
+
+void screen::setFileH(int h)
+{
+	height = h;
+}
+
+int screen::getFH()
+{
+	return height;
+}
+
+int screen::getFW()
+{
+	return width;
+}

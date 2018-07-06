@@ -67,20 +67,19 @@ float sphere::intersect(Eigen::Vector3d origin, Eigen::Vector3d dr)
 
 	int find = hit(D);
 
-	float t = -999.0f;
-	if (find != 0) {
-		if (D = 0.0f) {
-			t = -b / 2.0f;
-		}
-		else if (D > 0.0) {
+	float t = INFINITY;
+	if (find > 0) {
+		if (D > 0.0f) {
 			float t0 = (-b - pow(D, (0.5f))) / (a * 2.0);
 			float t1 = (-b + pow(D, (0.5f))) / (a * 2.0);
 			if (t0 > 0.0) {
-				t = t0;
+				return t0;
 			}
 			else
-				t = t1;
+				return t1;
 		}
+		else
+			return (-b / 2.0f);
 	}
 	return t;
 }

@@ -102,6 +102,9 @@ set(FILM_INCLUDE_DIR
 set(CORE_INCLUDE_DIR
     ${CMAKE_SOURCE_DIR}/src/Core)
 	
+set(JSONP_INCLUDE_DIR
+    ${CMAKE_SOURCE_DIR}/src/JsonParser)
+	
 add_definitions(-D_USE_MATH_DEFINES)
 add_subdirectory(src/Renderer)
 add_subdirectory(src/Screen)
@@ -112,6 +115,7 @@ add_subdirectory(src/Light)
 add_subdirectory(src/Integrator)
 add_subdirectory(src/Film)
 add_subdirectory(src/Core)
+add_subdirectory(src/JsonParser)
 					
 
 MESSAGE(STATUS "...Searching for Dependencies in : " ${EXTERNALLIBRARIES})
@@ -167,15 +171,16 @@ include_directories(${BASS_INCLUDE_DIR} ${CAM_INCLUDE_DIR}
 					${ING_INCLUDE_DIR} ${OPENEXR_INCLUDE_DIR}
 					${RAPIDJSON_INCLUDE_DIRS} ${FILM_INCLUDE_DIR}
 					${ILMBASE_INCLUDE_DIR} ${ZLIB_INCLUDE_DIRS}
-					${CORE_INCLUDE_DIR} ${STB_INCLUDE_DIR})
+					${CORE_INCLUDE_DIR} ${STB_INCLUDE_DIR}
+					${JSONP_INCLUDE_DIR})
 		
 add_executable(Renderer_Tester main.cpp)
 
 target_link_libraries(Renderer_Tester Renderer Screen 
                       Camera Objects Material Light
 					  Integrator Film ${ZLIB_LIBRARIES} ${OPENEXR_LIBRARIES}
-					  Core)
+					  Core JsonParser)
 
 ADD_DEPENDENCIES(Renderer_Tester Renderer Screen
                  Camera Objects Material Light
-				 Integrator Film Core)
+				 Integrator Film Core JsonParser)

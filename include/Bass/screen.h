@@ -18,6 +18,8 @@ class screen : public render {
 protected:
 	std::string mFormat;
 	std::vector <shape*> mShapes;
+	int width;
+	int height;
 public:
 
 	screen() { mFormat = "default"; };
@@ -27,6 +29,11 @@ public:
 	pinhole camToWorld(Eigen::Vector3d dir, Eigen::Vector3d loc, int theta);
 	void shapesToWorld(std::string here, Eigen::Vector3d cen, Eigen::Vector3d col, float r);
 	std::vector <shape*> getShapes();
+	void setFileW(int w);
+	void setFileH(int h);
+	int getFH();
+	int getFW();
+
 	
 };
 

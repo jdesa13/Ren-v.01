@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <string>
+#include <vector>
 #include "Bass/shape.h"
 #include "Bass/circle.h"
 #include "Bass/triangle.h"
@@ -20,6 +22,7 @@
 #include "rapidjson/document.h"
 #include "rapidjson/reader.h"
 #include "rapidjson/istreamwrapper.h"
+#include "Bass/jsonparse.h"
 
 int main(int argc, char* argv[])
 {
@@ -29,96 +32,19 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	std::cout << "Opening the following file: " << argv[1] << std::endl;
-	std::ifstream mFile(argv[1]);
-	try {
-		if (!mFile) throw "File undefined condition!";
-	}
-	catch (const char* msg)
-	{
-		std::cerr << "ERROR: READING FILE : " << argv[1] << ". Could not find it?" << std::endl;
-		std::cerr << "Usage: " << argv[0] << " filename" << std::endl;
-	}
+	parser here(argv[1]);
 
-
-
-
-	rapidjson::Document document;
-	rapidjson::IStreamWrapper isw(mFile);
-
-
-	if (document.ParseStream(isw).HasParseError())
-		std::cerr << "FAIL - JSON file Parse ERROR encountered" << std::endl;
-
-
-	//Just for unit testing - I would move this to class/strut/function, use asserts, something not this.
-	if (!document.HasMember("scene"))
-		std::cerr << "FAIL - Not a valid scene file..." << std::endl;
-	if (document["scene"]["version"].IsNull() || !document["scene"]["version"].IsString())
-		std::cerr << "FAIL - Missing Version Numer!" << std::endl;
-	if (document["scene"]["integrator"]["type"].IsNull() || !document["scene"]["integrator"]["type"].IsString())
-		std::cerr << "FAIL - Missing Integrator in the scene file." << std::endl;
-
-
-
-	std::cout << "Sensor Type: " << document["scene"]["sensor"]["type"].GetString() << ". Film file: "
-		<< document["scene"]["sensor"]["film"]["outputname"].GetString() << "."
-		<< document["scene"]["sensor"]["film"]["fileFormat"].GetString() << " of size: "
-		<< document["scene"]["sensor"]["film"]["width"].GetInt() << "x" << document["scene"]["sensor"]["film"]["height"].GetInt() << std::endl;
+	pinhole one = here.getpin();
+	std::vector <shape*> holder = here.getShapes();
+	int width = here.getfilmw();
+	int height = here.getfilmh();
 	
-	Eigen::Vector3d loc;
-	rapidjson::Value& pos = document["scene"]["sensor"]["transform"]["position"];
-	assert(pos.IsArray());
-	for (rapidjson::SizeType i = 0; i < pos.Size(); i++)
-	{
-		loc(i) = pos[i].GetInt();
-	}
-	std::cout << loc << std::endl;
-
-	Eigen::Vector3d dir;
-	rapidjson::Value& view = document["scene"]["sensor"]["transform"]["viewat"];
-	assert(view.IsArray());
-	for (rapidjson::SizeType i = 0; i < view.Size(); i++)
-	{
-		dir(i) = view[i].GetInt();
-	}
-	std::cout << dir << std::endl;
-
-	screen dot(document["scene"]["sensor"]["type"].GetString());
-	pinhole one = dot.camToWorld(dir, loc, document["scene"]["sensor"]["transform"]["fov"].GetInt());
-
-	//std::cout<< "  There are: "<<document["scene"]["shape"].Size() << " Shapes in the JSON scene file." << std::endl;
-	rapidjson::Value& shapes = document["scene"]["shapes"];
-	rapidjson::Value& ldrnm = document["scene"]["sensor"]["film"]["outputname"];
-
-	Eigen::Vector3d cen;
-	Eigen::Vector3d col(1,1,1);
+	Eigen::Vector3d col(1, 1, 1);
 	Eigen::Vector3d origin(0, 0, 0);
-	Eigen::Vector3d dr(0, 0, 1);
-	std::cout << "You have found " << shapes.Size() << " Shapes in the scene file." << std::endl;
-	for (rapidjson::SizeType i = 0; i < shapes.Size(); i++) // rapidjson uses SizeType instead of size_t.
-	{
-
-		rapidjson::Value& ter = shapes[i]["position"];
-		assert(ter.IsArray());
-		for (rapidjson::SizeType i = 0; i < ter.Size(); i++)
-		{
-			cen(i) = ter[i].GetFloat();
-		}
-		//std::cout << cen << std::endl;
-
-		dot.shapesToWorld(shapes[i]["type"].GetString(), cen, col, shapes[i]["radius"].GetInt());
-	}
-
-	std::vector<shape*> holder = dot.getShapes();
-	
-	rapidjson::Value& width = document["scene"]["sensor"]["film"]["width"];
-	rapidjson::Value& height = document["scene"]["sensor"]["film"]["height"];
-	
-	mFile.close();
-	
-	ldrfilm six(width.GetInt(), height.GetInt(),0);
-	int size = width.GetInt() * height.GetInt() * 4;
+	Eigen::Vector3d r(1, 0, 0);
+	Eigen::Vector3d g(0, 1, 0);
+	ldrfilm six(width, height,0);
+	int size = width * height * 4;
 	float *pixel = new float[size];
 	if (pixel == NULL)
 	{
@@ -127,36 +53,64 @@ int main(int argc, char* argv[])
 
 	core eleven(pixel);
 
-	float t1 = INFINITY;
-	float t2 = INFINITY;
+	float hit_point = INFINITY;
+	double intersect_point = INFINITY;
+	int intersect_object = -1;
+	bool hit = false;
+
 	int index;
-	for (int i = 0; height.GetInt(); i++) {
+	for (int i = 0; i<height; i++) {
 
-		for (int j = 0; width.GetInt(); j++) {
+		for (int j = 0; j<width; j++) {
 
-			index = i * width.GetInt() * 4 + j * 4;
-			for (int k = 1; k < holder.size(); k++) {
+			hit_point = INFINITY;
+			intersect_point = INFINITY;
+			intersect_object = -1;
+			hit = false; 
 
-				t1 = holder[k - 1]->intersect(origin, dr);
-				t2 = holder[k]->intersect(origin, dr);
-				if (t1 != INFINITY && t2 != INFINITY) {
-					if (t1 == -999.0  && t2 < t1) {
-						eleven.Corecol(index, col);
-					}
-					else if (t2 == -999.0 && t1 < t2) {
-						eleven.Corecol(index, col);
-					}
+			one.setDir(width, height,j,i,origin);
+			for (int k = 0; k < holder.size(); k++) {
+
+				intersect_point = holder[k]->intersect(origin, one.getDir());
+
+				//std::cout << intersect_point;
+				//std::cout << " ";
+
+				if (intersect_point < hit_point) {
+					hit_point = intersect_point;
+					intersect_object = k;
+					hit = true;
+				}
+
+			}//end shape loop
+			//std::cout << " " << "  ";
+			index = i * width * 4 + j * 4;
+
+			if (hit) {
+				if (intersect_object == 0) {
+					eleven.Corecol(index, r);
+				}
+				else
+				{
+					eleven.Corecol(index, g);
 				}
 			}
+			else {
+
+				eleven.Corecol(index,col);
+
+			}
+
+			// 
+
 		}
+		//std::cout << "" << std::endl;
 	}
 
-	 six.save(ldrnm.GetString(), eleven.getCcore());
+	 six.save(here.filename(), eleven.getCcore());
 	 std::cout << "add example here!";
 	return 0;
 }
-
-
 
 //int main(int argc, char** argv)
 //{
